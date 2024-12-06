@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -78,9 +79,17 @@ class UserController extends Controller
 
         // Pokušaj generiranja JWT tokena
         try {
-            // Generiraj JWT token
-            $token = JWTAuth::attempt($request->only('email', 'password'));
+            // // Generiraj JWT token
+            // $token = JWTAuth::attempt($request->only('email', 'password'));
 
+            // Generiraj JWT token s dodatnim podacima
+            $token = JWTAuth::claims([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'roles' => $user->roles->pluck('name')->toArray(), // Dodavanje rola
+                'permissions' => $user->permissions()->pluck('name')->toArray(), // Dodavanje dozvola
+            ])->attempt($request->only('email', 'password'));
 
             if (!$token) {
                 return response()->json([
@@ -241,7 +250,16 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'User fetched successfully',
-            'data' => $user
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+                'email_verified_at' => $user->email_verified_at,
+                'roles' => $user->roles->pluck('name'), // Dohvaćanje rola korisnika
+                'permissions' => $user->permissions()->pluck('name'), // Dohvaćanje dozvola korisnika
+            ]
         ]);
     }
 
