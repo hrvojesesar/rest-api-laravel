@@ -10,6 +10,19 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
-Route::post('/refresh-token', [UserController::class, 'refreshToken']);
-Route::post('/logout', [UserController::class, 'logout']);
-Route::post('/reset-password', [UserController::class, 'resetPassword']);
+// Route::post('/refresh-token', [UserController::class, 'refreshToken']);
+// Route::post('/logout', [UserController::class, 'logout']);
+// Route::post('/reset-password', [UserController::class, 'resetPassword']);
+// Route::delete('/delete-user', [UserController::class, 'deleteUser']);
+// Route::get('/me', [UserController::class, 'getMe']);
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/refresh-token', [UserController::class, 'refreshToken']);
+    Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/reset-password', [UserController::class, 'resetPassword']);
+    Route::delete('/delete-user', [UserController::class, 'deleteUser']);
+    Route::get('/me', [UserController::class, 'getMe']);
+    Route::get('/users', [UserController::class, 'getAllUsers']);
+    Route::get('/user/{id}', [UserController::class, 'getUserById']);
+    Route::put('/update-user/{id}', [UserController::class, 'updateUser']);
+});

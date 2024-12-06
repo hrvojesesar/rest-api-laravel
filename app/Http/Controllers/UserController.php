@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -170,6 +171,104 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Password reset successfully'
+        ]);
+    }
+
+    public function deleteUser(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|string',
+            'password' => 'required|string|min:6'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found!'
+            ], 404);
+        }
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid password!'
+            ], 401);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Account deleted successfully'
+        ]);
+    }
+
+    public function getMe(Request $request)
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Details about you',
+            'data' => $user
+        ]);
+    }
+
+    public function getAllUsers()
+    {
+        $users = User::all();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'All users fetched successfully',
+            'data' => $users
+        ]);
+    }
+
+    public function getUserById($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found!'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User fetched successfully',
+            'data' => $user
+        ]);
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:40',
+            'email' => 'required|email|string'
+        ]);
+
+        $user = User::where('id', $id)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found!'
+            ], 404);
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User updated successfully',
+            'data' => $user
         ]);
     }
 }
