@@ -131,4 +131,45 @@ class UserController extends Controller
             'message' => 'User logged out successfully'
         ]);
     }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|string',
+            'old_password' => 'required|string|min:6',
+            'new_password' => 'required|string|min:6',
+            'password_confirmation' => 'required|string|min:6'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found!'
+            ], 404);
+        }
+
+        if (!Hash::check($request->old_password, $user->password)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid password!'
+            ], 401);
+        }
+
+        if ($request->new_password !== $request->password_confirmation) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Password mismatch!'
+            ], 400);
+        }
+
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Password reset successfully'
+        ]);
+    }
 }
