@@ -81,4 +81,9 @@ class User extends Authenticatable implements JWTSubject
             $query->where('name', $permission);
         })->exists();
     }
+
+    public function permissions()
+    {
+        return $this->roles()->with('permissions')->get()->pluck('permissions')->flatten()->unique();
+    }
 }
