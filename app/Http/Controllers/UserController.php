@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends Controller
 {
@@ -56,6 +58,7 @@ class UserController extends Controller
             'password' => 'required|string'
         ]);
 
+        // Provjera korisnika
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
@@ -72,8 +75,27 @@ class UserController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Pokušaj generiranja JWT tokena
+        try {
+            // Generiraj JWT token
+            $token = JWTAuth::attempt($request->only('email', 'password'));
 
+
+            if (!$token) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid login credentials!'
+                ], 401);
+            }
+        } catch (JWTException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Could not create token!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+        // Povrat uspješnog odgovora s tokenom
         return response()->json([
             'status' => 'success',
             'message' => 'User logged in successfully',
