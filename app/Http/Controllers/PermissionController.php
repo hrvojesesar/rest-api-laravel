@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Permission;
+use App\Models\Role;
 
 class PermissionController extends Controller
 {
@@ -117,6 +118,40 @@ class PermissionController extends Controller
             [
                 'status' => 'success',
                 'message' => 'Permission deleted successfully'
+            ]
+        );
+    }
+
+    public function assignPermissionToRole(Request $request)
+    {
+        $request->validate(
+            [
+                'role_id' => 'required|integer',
+                'permission_id' => 'required|integer'
+            ]
+        );
+
+        $role = Role::where('id', $request->role_id)->first();
+        $permission = Permission::where('id', $request->permission_id)->first();
+
+        if (!$role || !$permission) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Role or permission not found'
+                ],
+                404
+            );
+        }
+
+        $role->permissions()->attach($permission->id);
+
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'Permission assigned to role successfully',
+                'role' => $role,
+                'permission' => $permission
             ]
         );
     }

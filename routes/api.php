@@ -44,4 +44,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/create-permission', [PermissionController::class, 'createPermission']);
     Route::put('/update-permission/{id}', [PermissionController::class, 'updatePermission']);
     Route::delete('/delete-permission/{id}', [PermissionController::class, 'deletePermission']);
+
+    // Assigning roles and permissions
+    Route::post('/assign-role-to-user', [RoleController::class, 'assignRoleToUser']);
+    Route::post('/assign-permission-to-role', [PermissionController::class, 'assignPermissionToRole']);
 });
