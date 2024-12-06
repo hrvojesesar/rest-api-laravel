@@ -9,6 +9,8 @@ class Permission extends Model
 {
     use HasFactory;
 
+    protected $table = 'permissions';
+
     protected $fillable = ['name'];
 
     protected $hidden = ['created_at', 'updated_at'];
