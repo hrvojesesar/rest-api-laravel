@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -25,4 +26,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/users', [UserController::class, 'getAllUsers']);
     Route::get('/user/{id}', [UserController::class, 'getUserById']);
     Route::put('/update-user/{id}', [UserController::class, 'updateUser']);
+
+
+    // Roles
+    Route::get('/roles', [RoleController::class, 'getAllRoles']);
+    Route::get('/role/{id}', [RoleController::class, 'getRoleById']);
+    Route::post('/create-role', [RoleController::class, 'createRole']);
+    Route::put('/update-role/{id}', [RoleController::class, 'updateRole']);
+    Route::delete('/delete-role/{id}', [RoleController::class, 'deleteRole']);
 });
