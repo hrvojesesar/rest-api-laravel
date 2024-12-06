@@ -155,4 +155,38 @@ class PermissionController extends Controller
             ]
         );
     }
+
+    public function revokePermissionFromRole(Request $request)
+    {
+        $request->validate(
+            [
+                'role_id' => 'required|integer',
+                'permission_id' => 'required|integer'
+            ]
+        );
+
+        $role = Role::where('id', $request->role_id)->first();
+        $permission = Permission::where('id', $request->permission_id)->first();
+
+        if (!$role || !$permission) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Role or permission not found'
+                ],
+                404
+            );
+        }
+
+        $role->permissions()->detach($permission->id);
+
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'Permission revoked from role successfully',
+                'role' => $role,
+                'permission' => $permission
+            ]
+        );
+    }
 }

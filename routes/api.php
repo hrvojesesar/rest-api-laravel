@@ -19,6 +19,7 @@ Route::post('/login', [UserController::class, 'login']);
 // Route::get('/me', [UserController::class, 'getMe']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+
     // Users
     Route::post('/refresh-token', [UserController::class, 'refreshToken']);
     Route::post('/logout', [UserController::class, 'logout']);
@@ -45,7 +46,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/update-permission/{id}', [PermissionController::class, 'updatePermission']);
     Route::delete('/delete-permission/{id}', [PermissionController::class, 'deletePermission']);
 
-    // Assigning roles and permissions
+    // Assigning and revoking roles and permissions
     Route::post('/assign-role-to-user', [RoleController::class, 'assignRoleToUser']);
     Route::post('/assign-permission-to-role', [PermissionController::class, 'assignPermissionToRole']);
+    Route::delete('/revoke-role-from-user', [RoleController::class, 'revokeRoleFromUser']);
+    Route::delete('/revoke-permission-from-role', [PermissionController::class, 'revokePermissionFromRole']);
 });

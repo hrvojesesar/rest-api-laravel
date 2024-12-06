@@ -135,4 +135,39 @@ class RoleController extends Controller
             'role' => $role
         ]);
     }
+
+    public function revokeRoleFromUser(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|integer',
+            'role_id' => 'required|integer'
+        ]);
+
+        $user = User::where('id', $request->user_id)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $role = Role::where('id', $request->role_id)->first();
+
+        if (!$role) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Role not found'
+            ], 404);
+        }
+
+        $user->roles()->detach($role->id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Role revoked from user successfully',
+            'user' => $user,
+            'role' => $role
+        ]);
+    }
 }
