@@ -250,7 +250,16 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'User fetched successfully',
-            'data' => $user
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+                'email_verified_at' => $user->email_verified_at,
+                'roles' => $user->roles->pluck('name'), // Dohvaćanje rola korisnika
+                'permissions' => $user->permissions()->pluck('name'), // Dohvaćanje dozvola korisnika
+            ]
         ]);
     }
 
