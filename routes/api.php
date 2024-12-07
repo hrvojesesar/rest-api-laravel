@@ -65,3 +65,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,region-read'])->group(function () {
     Route::get('/regions', [RegionController::class, 'getAllRegions']);
 });
+Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,region-create'])->group(function () {
+    Route::post('/create-region', [RegionController::class, 'createRegion']);
+});
+Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,region-update'])->group(function () {
+    Route::put('/update-region/{id}', [RegionController::class, 'updateRegion']);
+});
+Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,region-delete'])->group(function () {
+    Route::delete('/delete-region/{id}', [RegionController::class, 'deleteRegion']);
+});
