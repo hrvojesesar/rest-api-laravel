@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RegionController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -51,4 +52,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/assign-permission-to-role', [PermissionController::class, 'assignPermissionToRole']);
     Route::delete('/revoke-role-from-user', [RoleController::class, 'revokeRoleFromUser']);
     Route::delete('/revoke-permission-from-role', [PermissionController::class, 'revokePermissionFromRole']);
+
+    // Region
+    Route::get('/regions', [RegionController::class, 'getAllRegions']);
+    Route::get('/region/{id}', [RegionController::class, 'getRegionById']);
+    Route::post('/create-region', [RegionController::class, 'createRegion']);
+    Route::put('/update-region/{id}', [RegionController::class, 'updateRegion']);
+    Route::delete('/delete-region/{id}', [RegionController::class, 'deleteRegion']);
 });
