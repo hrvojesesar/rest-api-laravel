@@ -54,9 +54,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/revoke-permission-from-role', [PermissionController::class, 'revokePermissionFromRole']);
 
     // Region
+    // Route::get('/regions', [RegionController::class, 'getAllRegions']);
+    // Route::get('/region/{id}', [RegionController::class, 'getRegionById']);
+    // Route::post('/create-region', [RegionController::class, 'createRegion']);
+    // Route::put('/update-region/{id}', [RegionController::class, 'updateRegion']);
+    // Route::delete('/delete-region/{id}', [RegionController::class, 'deleteRegion']);
+});
+
+
+Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,region-read'])->group(function () {
     Route::get('/regions', [RegionController::class, 'getAllRegions']);
-    Route::get('/region/{id}', [RegionController::class, 'getRegionById']);
-    Route::post('/create-region', [RegionController::class, 'createRegion']);
-    Route::put('/update-region/{id}', [RegionController::class, 'updateRegion']);
-    Route::delete('/delete-region/{id}', [RegionController::class, 'deleteRegion']);
 });
