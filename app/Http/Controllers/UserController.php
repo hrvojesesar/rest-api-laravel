@@ -10,8 +10,58 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @OA\Info(title="Northwind Rest API", version="1.0")
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
+ * )
+ */
+
 class UserController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/register",
+     *     summary="Register a new user",
+     *     tags={"Register"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email", "password", "password_confirmation"},
+     *             @OA\Property(property="name", type="string", example="Hrvoje Sesar"),
+     *             @OA\Property(property="email", type="string", example="hrvoje.sesar@gmail.com"),
+     *             @OA\Property(property="password", type="string", example="123456"),
+     *             @OA\Property(property="password_confirmation", type="string", example="123456")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User registered successfully.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User registered successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation failed.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Validation failed."),
+     *             @OA\Property(property="errors", type="object", example={"email": {"The email field is required."}})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="An error occurred while processing your request.")
+     *         )
+     *     )
+     * )
+     */
+
     public function register(Request $request)
     {
         $request->validate([
