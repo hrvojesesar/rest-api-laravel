@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RegionController;
+use App\Http\Controllers\CategoryController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -65,12 +66,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,admin,region-read'])->group(function () {
     Route::get('/regions', [RegionController::class, 'getAllRegions']);
 });
-
 Route::middleware(['auth:api', 'check.token.role.permission:admin,region-read'])->group(function () {
     Route::get('/region/{id}', [RegionController::class, 'getRegionById']);
 });
-
-
 Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,region-create'])->group(function () {
     Route::post('/create-region', [RegionController::class, 'createRegion']);
 });
@@ -79,4 +77,22 @@ Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,region-up
 });
 Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,region-delete'])->group(function () {
     Route::delete('/delete-region/{id}', [RegionController::class, 'deleteRegion']);
+});
+
+
+
+Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,admin,category-read'])->group(function () {
+    Route::get('/categories', [CategoryController::class, 'getAllCategories']);
+});
+Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,admin,category-read'])->group(function () {
+    Route::get('/category/{id}', [CategoryController::class, 'getCategoryById']);
+});
+Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,admin,category-read'])->group(function () {
+    Route::post('/create-category', [CategoryController::class, 'createCategory']);
+});
+Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,admin,category-read'])->group(function () {
+    Route::put('/update-category/{id}', [CategoryController::class, 'updateCategory']);
+});
+Route::middleware(['auth:api', 'check.token.role.permission:superAdmin,admin,category-read'])->group(function () {
+    Route::delete('/delete-category/{id}', [CategoryController::class, 'deleteCategory']);
 });

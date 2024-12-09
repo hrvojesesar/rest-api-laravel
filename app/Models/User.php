@@ -90,4 +90,52 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->roles()->with('permissions')->get()->pluck('permissions')->flatten()->unique();
     }
+
+    // dodijeli korisniku ulogu (argument ime uloge)
+    public function assignRole($role)
+    {
+        $role = Role::where('name', $role)->first();
+
+        if (!$role) {
+            return false;
+        }
+
+        return $this->roles()->syncWithoutDetaching($role->id);
+    }
+
+    // dodijeli korisniku dozvolu (argument ime dozvole)
+    public function assignPermission($permission)
+    {
+        $permission = Permission::where('name', $permission)->first();
+
+        if (!$permission) {
+            return false;
+        }
+
+        return $this->permissions()->syncWithoutDetaching($permission->id);
+    }
+
+    // ukloni korisniku ulogu (argument ime uloge)
+    public function revokeRole($role)
+    {
+        $role = Role::where('name', $role)->first();
+
+        if (!$role) {
+            return false;
+        }
+
+        return $this->roles()->detach($role->id);
+    }
+
+    // ukloni korisniku dozvolu (argument ime dozvole)
+    public function revokePermission($permission)
+    {
+        $permission = Permission::where('name', $permission)->first();
+
+        if (!$permission) {
+            return false;
+        }
+
+        return $this->permissions()->detach($permission->id);
+    }
 }
